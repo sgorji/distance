@@ -70,7 +70,7 @@ def printOutput(df):
     p2 = closest['Name2'].tolist()[0]
     dist = closest['Distance'].tolist()[0]
 
-    print(df.to_string())
+    print(df.to_string(index=False, justify='left'))
     print(f'Average distance: {avgDist:.3f} km. Closest pair: ' +
           f'{p1} - {p2} {dist:.3f} km.')
     return
