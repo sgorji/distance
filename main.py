@@ -11,8 +11,9 @@ geolocator = Nominatim(user_agent='Airmine')
 
 
 def randomPlaces(n):
-    # randomly generated coordinates and places
-    # but this way does not generate a uniform distribution
+    '''This function randomly generates coordinates until it finds n places.''' 
+    # But this way does not generate a uniform distribution!
+
     places = []
     while len(places) < n:
         coordinates = (np.random.rand(n, 2) * [180, 360]) - [90, 180]
@@ -36,6 +37,8 @@ def randomPlaces(n):
 
 
 def calculateDistance(df):
+    '''This function calculates pairwise distances between input locations.''' 
+
     distances = []
     for i, row1 in df.iterrows():
         for j, row2 in df.iterrows():
@@ -52,7 +55,7 @@ def calculateDistance(df):
                     print(row2)
                     input('?')
 
-    # Convert distance list to a dataFrame and sort pairs by distance
+    # Convert distance-list to a dataFrame and sort by the 'Distance' column
     df = pd.DataFrame(
         distances, 
         columns=['Name1', 'Name2', 'Distance', 'Unit']
@@ -61,6 +64,9 @@ def calculateDistance(df):
 
 
 def printOutput(df):
+    '''This function prints the results in the console, including list of all 
+    distances in the ascending order, the average distance and the closest value to it.''' 
+    
     # Average distance
     avgDist = df['Distance'].mean()
 
@@ -76,7 +82,7 @@ def printOutput(df):
     return
 
 
-# Optional input argument 'n' and default input file as fallback 
+# Optional input argument 'n' and the default input file as the fallback 
 try:
     n = int(sys.argv[1])
     df = randomPlaces(n)
