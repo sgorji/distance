@@ -25,13 +25,35 @@ def randomPlaces(n):
                 try:
                     name = location[0].split(',')[0]
                     places.append([name, latitude, longitude])
+                    if len(places) == n:
+                        break
                 except:
                     print('no name at ' + coordinateString)
 
     print(f'Generated {n} random places.')
-    df = pd.DataFrame(data = places, 
-                        columns = ['Name', 'Latitude', 'Longitude'])
+    df = pd.DataFrame(data=places,
+                      columns=['Name', 'Latitude', 'Longitude'])
     return df
+
+
+def calculateDistance(df):
+    distances = []
+    for i, row1 in df.iterrows():
+        for j, row2 in df.iterrows():
+            if i < j:
+                try:
+                    distances.append([
+                        row1['Name'],
+                        row2['Name'],
+                        gd(row1[['Latitude', 'Longitude']],
+                           row2[['Latitude', 'Longitude']]).km])
+                except:
+                    print(row1)
+                    print(row2)
+                    input('?')
+
+    print(distances)
+    return distances
 
 
 argc = len(sys.argv)
@@ -49,5 +71,5 @@ if fileInputFlag:
 else:
     df = randomPlaces(n)
 
-print(df.to_string()) 
-
+print(df.to_string())
+calculateDistance(df)
