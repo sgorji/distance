@@ -1,5 +1,4 @@
 import sys
-# import math
 import numpy as np
 import pandas as pd
 
@@ -29,9 +28,10 @@ def randomPlaces(n):
                 except:
                     print('no name at ' + coordinateString)
 
-    print(f'Generated {n} random places.')
-    df = pd.DataFrame(data=places,
-                      columns=['Name', 'Latitude', 'Longitude'])
+    df = pd.DataFrame(
+        data=places,
+        columns=['Name', 'Latitude', 'Longitude']
+        )
     return df
 
 
@@ -44,8 +44,6 @@ def calculateDistance(df):
                     distances.append([
                         row1['Name'],
                         row2['Name'],
-                        # '%10.2f km' % gd(row1[['Latitude', 'Longitude']],
-                        #    row2[['Latitude', 'Longitude']]).km
                         gd(row1[['Latitude', 'Longitude']],
                            row2[['Latitude', 'Longitude']]).km,
                         'km'])
@@ -54,9 +52,12 @@ def calculateDistance(df):
                     print(row2)
                     input('?')
 
-    df = pd.DataFrame(distances, columns =['Name1', 'Name2', 'Distance', 'Unit'])
-    sorted = df.sort_values(by=['Distance'])
-    return sorted
+    # Convert distance list to a dataFrame and sort pairs by distance
+    df = pd.DataFrame(
+        distances, 
+        columns=['Name1', 'Name2', 'Distance', 'Unit']
+        ).sort_values(by=['Distance'])
+    return df
 
 
 def printOutput(df):
@@ -68,29 +69,20 @@ def printOutput(df):
     p1 = closest['Name1'].tolist()[0]
     p2 = closest['Name2'].tolist()[0]
     dist = closest['Distance'].tolist()[0]
-    
-    print(df)
-    print(f'Average distance: {avgDist:.3f} km. Closest pair: ' + f'{p1} - {p2} {dist:.3f} km.')
+
+    print(df.to_string())
+    print(f'Average distance: {avgDist:.3f} km. Closest pair: ' +
+          f'{p1} - {p2} {dist:.3f} km.')
     return
 
 
-fileInputFlag = False
-
-argc = len(sys.argv)
-if (argc > 1):
-    try:
-        n = int(sys.argv[1])
-    except:
-        print('Invalid argument!')
-        fileInputFlag = True
-else:
-    fileInputFlag = True
-
-if fileInputFlag:
-    df = pd.read_csv('places.csv')
-else:
+# Optional input argument 'n' and default input file as fallback 
+try:
+    n = int(sys.argv[1])
     df = randomPlaces(n)
+except:
+    df = pd.read_csv('places.csv')
 
-print(df.to_string())
 df = calculateDistance(df)
+
 printOutput(df)
