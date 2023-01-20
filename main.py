@@ -1,4 +1,5 @@
 import sys
+# import math
 import numpy as np
 import pandas as pd
 
@@ -8,8 +9,6 @@ from geopy.extra.rate_limiter import RateLimiter
 from geopy.distance import geodesic as gd
 
 geolocator = Nominatim(user_agent='Airmine')
-
-fileInputFlag = False
 
 
 def randomPlaces(n):
@@ -45,23 +44,37 @@ def calculateDistance(df):
                     distances.append([
                         row1['Name'],
                         row2['Name'],
-                        '%10.2f km' % gd(row1[['Latitude', 'Longitude']],
-                           row2[['Latitude', 'Longitude']]).km])
+                        # '%10.2f km' % gd(row1[['Latitude', 'Longitude']],
+                        #    row2[['Latitude', 'Longitude']]).km
+                        gd(row1[['Latitude', 'Longitude']],
+                           row2[['Latitude', 'Longitude']]).km,
+                        'km'])
                 except:
                     print(row1)
                     print(row2)
                     input('?')
 
-    df = pd.DataFrame(distances, columns =['Name1', 'Name2', 'Distance'])
+    df = pd.DataFrame(distances, columns =['Name1', 'Name2', 'Distance', 'Unit'])
     sorted = df.sort_values(by=['Distance'])
-    print(sorted)
     return sorted
 
 
 def printOutput(df):
-    averageDistance = df['Distance'].mean()
+    # Average distance
+    avgDist = df['Distance'].mean()
+
+    # Finding the closest value to the average
+    closest = df.iloc[(df['Distance']-avgDist).abs().argsort()[:1]]
+    p1 = closest['Name1'].tolist()[0]
+    p2 = closest['Name2'].tolist()[0]
+    dist = closest['Distance'].tolist()[0]
+    
+    print(df)
+    print(f'Average distance: {avgDist:.3f} km. Closest pair: ' + f'{p1} - {p2} {dist:.3f} km.')
     return
 
+
+fileInputFlag = False
 
 argc = len(sys.argv)
 if (argc > 1):
@@ -79,6 +92,5 @@ else:
     df = randomPlaces(n)
 
 print(df.to_string())
-calculateDistance(df)
-printOutput()
-
+df = calculateDistance(df)
+printOutput(df)
