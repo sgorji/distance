@@ -45,15 +45,22 @@ def calculateDistance(df):
                     distances.append([
                         row1['Name'],
                         row2['Name'],
-                        gd(row1[['Latitude', 'Longitude']],
+                        '%10.2f km' % gd(row1[['Latitude', 'Longitude']],
                            row2[['Latitude', 'Longitude']]).km])
                 except:
                     print(row1)
                     print(row2)
                     input('?')
 
-    print(distances)
-    return distances
+    df = pd.DataFrame(distances, columns =['Name1', 'Name2', 'Distance'])
+    sorted = df.sort_values(by=['Distance'])
+    print(sorted)
+    return sorted
+
+
+def printOutput(df):
+    averageDistance = df['Distance'].mean()
+    return
 
 
 argc = len(sys.argv)
@@ -73,3 +80,5 @@ else:
 
 print(df.to_string())
 calculateDistance(df)
+printOutput()
+
